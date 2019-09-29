@@ -11,8 +11,8 @@ SOMA_V:
   return: int
 somaVFSIMDFEX1A:
   params:
-    - array int
-    - array int
-    - array int
+    - array float
+    - array float
+    - array float
     - int
   return: void
