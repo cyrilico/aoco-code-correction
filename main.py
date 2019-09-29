@@ -15,10 +15,18 @@ def parse_args():
 
     return vars(parser.parse_args())
 
+def build_test_call_argument(argument):
+    """Creates a valid function call argument (adapts to argument type)
+    """
+    if type(argument) is list:
+        return '({}[]){{ {} }}'.format(type(argument[0]).__name__, ','.join([str(e) for e in argument]))
+    else:
+        return str(argument)
+
 def build_test_call(func_name, inputs):
     """Creates a function call given a specific test case and prints result to stdout
     """
-    return 'printf("%%d\\n", {}({}));'.format(func_name, ','.join([str(i) for i in inputs]))
+    return 'printf("%d\\n", {}({}));'.format(func_name, ','.join([build_test_call_argument(i) for i in inputs]))
 
 def build_arg_list(params):
     """Creates function argument list given its parameter types
@@ -49,6 +57,6 @@ if __name__ == "__main__":
     except YAMLError as err:
         print('Error parsing YAML files: ({}), please correct syntax'.format(str(err)))
     
-    build_subroutine_c_file('soma', subroutines['soma'], [test_case['inputs'] for test_case in test_suite['soma']])
+    build_subroutine_c_file('SOMA_V', subroutines['SOMA_V'], [test_case['inputs'] for test_case in test_suite['SOMA_V']])
 
     
