@@ -1,5 +1,6 @@
-from yaml import safe_load
+from yaml import safe_load, YAMLError
 from argparse import ArgumentParser
+from sys import exit
 
 def parse_args():
     """Uses argparse module to create a pretty CLI interface that has the -h by default and that helps the user understand the arguments and their usage
@@ -8,20 +9,40 @@ def parse_args():
     parser = ArgumentParser(
         description="AOCO - Automatic Observation and Correction of (subroutine) Operations")
 
-    parser.add_argument('-sr', '--subroutines', help='YAML file containing definition of subroutines', required=True)
-    parser.add_argument('-t', '--test', help='YAML file containing test cases for evaluation', required=True)
-    parser.add_argument('-sm', '--submissions', help='Whitespace separated list of .zip files corresponding to students\' submissions', required=True, nargs='+')
+    parser.add_argument('-sr', help='YAML file containing definition of subroutines', required=True)
+    parser.add_argument('-t', help='YAML file containing test cases for evaluation', required=True)
+    parser.add_argument('-sm', help='Whitespace separated list of .zip files corresponding to students\' submissions', required=True, nargs='+')
 
     return vars(parser.parse_args())
 
+def build_arg_list(params):
+    """Creates function argument list given its parameter types
+    """
+    return ','.join(['{} {}'.format(
+                            '{}*'.format(arg.replace('array ', '')) if 'array' in arg else arg,
+                            'arg{}'.format(arg_idx)
+                            ) for arg_idx, arg in enumerate(params)])
+
+def build_subroutine_c_file(name, definition, test_cases):
+    """Creates a C file that will run all the test inputs for a given subroutine
+    """
+    file = open('{}.c'.format(name), 'w')
+    file.write('#include <stdio.h>\n')
+
+    file.write('extern {} {}({});'.format(definition['return'], name, build_arg_list(definition['params'])))
 
 if __name__ == "__main__":
     args = parse_args()
-    with open(args['sr']) as subroutines, open(args['t']) as test_suite:
-        subroutines_data = safe_load(subroutines)
-        test_suite_data = safe_load(test_suite)
-
-
-
-
+    try:
+        subroutines = safe_load(open(args['sr']))
+        test_suite = safe_load(open(args['t']))
         
+    except IOError as err:
+        print('Could not open: {}, please specify a valid file'.format(str(err)))
+        exit(-1)
+    except YAMLError as err:
+        print('Error parsing YAML files: ({}), please correct syntax'.format(str(err)))
+    
+    #build_subroutine_c_file('somaVFSIMDFEX1A', subroutines['somaVFSIMDFEX1A'], [])
+
+    
