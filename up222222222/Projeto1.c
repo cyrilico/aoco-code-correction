@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 extern int SOMA(int aa, int bb);
 extern int SOMA_V(int *a, int n);
@@ -14,7 +13,7 @@ int main() {
 	int b = 10;
 	int ca = 0;
     ca =  SOMA( a, b);
-    //printf("A soma � %d\n", ca);
+    printf("A soma � %d\n", ca);
 
 
     // Q2
@@ -23,7 +22,7 @@ int main() {
 	int v[] = { 3, -1, 8, 0, -3};
 	int res;
 	res = SOMA_V(v, dim);
-	//printf("Soma dos elementos = %d\n", res);
+	printf("Soma dos elementos = %d\n", res);
 	
     // Q3
 
@@ -33,7 +32,7 @@ int main() {
 	int NFSIMDFEX1A = 16;
 	somaVFSIMDFEX1A(PFSIMDFEX1A, QFSIMDFEX1A, RFSIMDFEX1A, NFSIMDFEX1A );
 	    for(int i = 0; i < 16; i++) {
-	    	 	        //printf("R[%d]= %f\n",i, RFSIMDFEX1A[i]);
+	    	 	        printf("R[%d]= %f\n",i, RFSIMDFEX1A[i]);
 	    }
 
 return 0;

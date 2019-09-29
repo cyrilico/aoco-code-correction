@@ -19,3 +19,16 @@ soma:
     - 2
     - 3
     output: 5
+SOMA_V:
+  - inputs:
+    - [3,-1,8,0,-3]
+    - 5
+    output: 7
+  - inputs:
+    - [3,0,1,0,-3]
+    - 5
+    output: 1
+  - inputs:
+    - [0]
+    - 1
+    output: 0

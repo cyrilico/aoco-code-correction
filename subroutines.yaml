@@ -4,7 +4,7 @@ soma:
     - int
     - int
   return: int
-SOMAV:
+SOMA_V:
   params:
     - array int
     - int
