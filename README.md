@@ -1,7 +1,7 @@
-# aoco-code-correction
+# AOCO - Automatic Observation and Correction of (subroutine) Operations
 
-Automatic correction tool for ARM subroutines for AOCO.
+Code correction and verification tool for ARM subroutines for a course named... AOCO.
 
 Requirements:
-- Python3 with pyyaml, argparse
+- Python3
 - Ubuntu 19.04 with packages libc6-dev-arm64-cross gcc-aarch64-linux-gnu binfmt-support qemu-user-static
