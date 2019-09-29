@@ -32,7 +32,8 @@ def build_arg_list(params):
     """Creates function argument list given its parameter types
     """
     return ','.join(['{} {}'.format(
-                            '{}*'.format(arg.replace('array ', '')) if 'array' in arg else arg,
+                            '{}*'.format(arg.replace('array ', '')) if 'array' in arg 
+                                else 'char*' if arg == 'string' else arg,
                             'arg{}'.format(arg_idx)
                             ) for arg_idx, arg in enumerate(params)])
 
