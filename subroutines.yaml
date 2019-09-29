@@ -1,0 +1,19 @@
+--- 
+soma: 
+  params: 
+    - int
+    - int
+  return: int
+SOMAV:
+  params:
+    - array int
+    - int
+  return: int
+somaVFSIMDFEX1A:
+  params:
+    - array int
+    - array int
+    - array int
+    - int
+  return:
+    - void
