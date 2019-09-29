@@ -1,0 +1,21 @@
+soma:
+  - inputs:
+    - 5
+    - 10
+    output: 15
+  - inputs:
+    - -5
+    - 10
+    output: 5
+  - inputs:
+    - 5
+    - -10
+    output: -5
+  - inputs:
+    - -5
+    - -10
+    output: -15
+  - inputs:
+    - 2
+    - 3
+    output: 5
