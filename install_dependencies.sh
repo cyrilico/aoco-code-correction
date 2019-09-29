@@ -1,0 +1,1 @@
+sudo apt-get install libc6-dev-arm64-cross gcc-aarch64-linux-gnu binfmt-support qemu-user-static
