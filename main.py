@@ -15,6 +15,11 @@ def parse_args():
 
     return vars(parser.parse_args())
 
+def build_test_call(func_name, inputs):
+    """Creates a function call given a specific test case and prints result to stdout
+    """
+    return 'printf("%%d\\n", {}({}));'.format(func_name, ','.join([str(i) for i in inputs]))
+
 def build_arg_list(params):
     """Creates function argument list given its parameter types
     """
@@ -29,20 +34,21 @@ def build_subroutine_c_file(name, definition, test_cases):
     file = open('{}.c'.format(name), 'w')
     file.write('#include <stdio.h>\n')
 
-    file.write('extern {} {}({});'.format(definition['return'], name, build_arg_list(definition['params'])))
+    file.write('extern {} {}({});\n'.format(definition['return'], name, build_arg_list(definition['params'])))
+
+    file.write('int main() {{ {} return 0;}}'.format(' '.join([build_test_call(name, inputs) for inputs in test_cases])))
 
 if __name__ == "__main__":
     args = parse_args()
     try:
         subroutines = safe_load(open(args['sr']))
         test_suite = safe_load(open(args['t']))
-        
     except IOError as err:
         print('Could not open: {}, please specify a valid file'.format(str(err)))
         exit(-1)
     except YAMLError as err:
         print('Error parsing YAML files: ({}), please correct syntax'.format(str(err)))
     
-    #build_subroutine_c_file('somaVFSIMDFEX1A', subroutines['somaVFSIMDFEX1A'], [])
+    build_subroutine_c_file('soma', subroutines['soma'], [test_case['inputs'] for test_case in test_suite['soma']])
 
     
