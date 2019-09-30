@@ -11,7 +11,7 @@ def parse_args():
 
     parser.add_argument('-sr', help='YAML file containing definition of subroutines', required=True)
     parser.add_argument('-t', help='YAML file containing test cases for evaluation', required=True)
-    parser.add_argument('-sm', help='Whitespace separated list of .zip files corresponding to students\' submissions', required=True, nargs='+')
+    parser.add_argument('-sm', help='Whitespace separated list of .zip files corresponding to students\' submissions'""", required=True, nargs='+'""") #TODO: Uncomment when grading part comes
 
     return vars(parser.parse_args())
 
@@ -38,14 +38,14 @@ def build_arg_list(params):
                             ) for arg_idx, arg in enumerate(params)])
 
 def build_subroutine_c_file(name, definition, test_cases):
-    """Creates a C file that will run all the test inputs for a given subroutine
-    """
-    file = open('{}.c'.format(name), 'w')
-    file.write('#include <stdio.h>\n')
+#     """Creates a C file that will run all the test inputs for a given subroutine
+#     """
+#     file = open('{}.c'.format(name), 'w')
+#     file.write('#include <stdio.h>\n')
 
-    file.write('extern {} {}({});\n'.format(definition['return'], name, build_arg_list(definition['params'])))
+#     file.write('extern {} {}({});\n'.format(definition['return'], name, build_arg_list(definition['params'])))
 
-    file.write('int main() {{ {} return 0;}}'.format(' '.join([build_test_call(name, inputs) for inputs in test_cases])))
+#     file.write('int main() {{ {} return 0;}}'.format(' '.join([build_test_call(name, inputs) for inputs in test_cases])))
 
 if __name__ == "__main__":
     args = parse_args()
@@ -58,6 +58,10 @@ if __name__ == "__main__":
     except YAMLError as err:
         print('Error parsing YAML files: ({}), please correct syntax'.format(str(err)))
     
-    build_subroutine_c_file('SOMA_V', subroutines['SOMA_V'], [test_case['inputs'] for test_case in test_suite['SOMA_V']])
+    #Build C files to compile and compare output
+    # for subroutine in subroutines.keys():
+    #     build_subroutine_c_file(subroutine, subroutines[subroutine], [test_case['inputs'] for test_case in test_suite[subroutine]])
 
-    
+
+    for name, definition in subroutines.items():
+        build_subroutine_c_file(name, definition, test_suite[name])
