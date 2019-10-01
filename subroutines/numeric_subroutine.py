@@ -1,4 +1,7 @@
 from .subroutine import subroutine
+from ..string_parameter import string_parameter
+from ..numeric_parameter import numeric_parameter
+from ..array_parameter import array_parameter
 
 class numeric_subroutine(subroutine):
     """Subroutine that returns a single numeric value (e.g., int, float, double)"""
@@ -8,9 +11,13 @@ class numeric_subroutine(subroutine):
         self.output = return_type
     
     def build_test_calls(self):
-        """Method where subroutines implement the calls to test the input data and print out the calls' results"""
         pass
 
     def process_parameters(self, parameters):
-        """Method where subroutines create argument objects for each type. Depending on subroutine type might be an output too."""
-        pass
+        for idx, parameter in enumerate(parameters):
+            if parameter == 'string':
+                self.parameters.append(string_parameter(idx, False))
+            elif parameter == 'array':
+                self.parameters.append(array_parameter(idx, parameter.replace('array','').strip(), False))
+            else: #numeric
+                self.parameters.append(numeric_parameter(idx, parameter))
