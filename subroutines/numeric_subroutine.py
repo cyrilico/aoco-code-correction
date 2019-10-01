@@ -4,7 +4,7 @@ class numeric_subroutine(subroutine):
     """Subroutine that returns a single numeric value (e.g., int, float, double)"""
 
     def __init__(self, name, parameters, test_inputs, return_type):
-        super().__init__(name)
+        super().__init__(name, parameters, test_inputs)
         self.output = return_type
     
     def build_test_calls(self):
