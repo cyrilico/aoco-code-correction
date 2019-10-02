@@ -12,4 +12,4 @@ class array_parameter(parameter):
         return '{}* arg{}'.format(self.element_type, self.idx)
 
     def get_test_declaration_representation(self, value, test_idx):
-        return '{}* test{}_arg{} = {{ {} }};'.format(self.element_type, test_idx, self.idx, ','.join(value)) if self.is_output else ''
+        return '{} test{}_arg{}[] = {{ {} }};'.format(self.element_type, test_idx, self.idx, ','.join(value)) if self.is_output else ''
