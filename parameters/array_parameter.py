@@ -16,7 +16,7 @@ class array_parameter(parameter):
         return '{} test{}_arg{}[] = {{ {} }};'.format(self.element_type, test_idx, self.idx, ','.join(value)) if self.is_output else ''
     
     def get_test_call_representation(self, value, test_idx):
-        return 'test{}_arg{}'.format(test_idx, self.idx) if self.is_output else '({}[]){{ {} }}'.format(self.element_type, ','.join(value))
+        return 'test{}_arg{}'.format(test_idx, self.idx) if self.is_output else '({}[]){{ {} }}'.format(self.element_type, ','.join(map(str, value)))
     
     def get_test_call_output_representation(self, test_idx):
         var_name = 'test{}_arg{}'.format(test_idx, self.idx)

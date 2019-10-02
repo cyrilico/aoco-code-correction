@@ -24,7 +24,7 @@ class numeric_subroutine(subroutine):
         for idx, parameter in enumerate(parameters):
             if parameter == 'string':
                 self.parameters.append(String(idx, False))
-            elif parameter == 'array':
+            elif 'array' in parameter:
                 self.parameters.append(Array(idx, parameter.replace('array','').strip(), False))
             else: #numeric
                 self.parameters.append(Numeric(idx, parameter))
