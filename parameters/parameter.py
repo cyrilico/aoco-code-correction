@@ -12,5 +12,13 @@ class parameter:
         pass
 
     def get_test_declaration_representation(self, value, test_idx):
-        """Method that return parameter's declaration to use before a function call, when it is of the adequate type"""
+        """Method that returns parameter's declaration to use before a function call, when it is of the adequate type"""
+        pass
+    
+    def get_test_call_representation(self, value, test_idx):
+        """Method that returns parameter's representation as an actual argument to a subroutine call (may be direct value or variable, where value is not used)"""
+        pass
+    
+    def get_test_call_output_representation(self, test_idx):
+        """Method that calculates the adequate printf statements post-subroutine call for arrays and strings"""
         pass
