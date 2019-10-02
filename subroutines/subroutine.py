@@ -6,11 +6,12 @@ class subroutine:
 
     def __init__(self, name, parameters, test_inputs):
         self.name = name
-        self.process_parameters(parameters)
         self.test_inputs = test_inputs
         self.file = open('{}.c'.format(self.name), 'w')
+        self.parameters_raw = parameters
     
     def build_c_file(self):
+        self.process_parameters(self.parameters_raw)
         self.file.write('#include <stdio.h>\n')
         self.file.write(self.build_prototype())
         self.file.write('int main() {{ {} return 0;}}'.format(self.build_test_calls()))
