@@ -12,3 +12,9 @@ class string_parameter(parameter):
 
     def get_test_declaration_representation(self, value, test_idx):
         return 'char test{}_arg{}[] = "{}";'.format(test_idx, self.idx, value) if self.is_output else ''
+    
+    def get_test_call_representation(self, value, test_idx):
+        return 'test{}_arg{}'.format(test_idx, self.idx) if self.is_output else value
+    
+    def get_test_call_output_representation(self, test_idx):
+        return 'printf("%s", test{}_arg{});'.format(test_idx, self.idx) if self.is_output else ''
