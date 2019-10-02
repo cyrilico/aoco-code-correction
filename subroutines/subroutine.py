@@ -13,10 +13,11 @@ class subroutine:
     def build_c_file(self):
         self.file.write('#include <stdio.h>\n')
         self.file.write(self.build_prototype())
-        self.file.write('int main() {{ {} return 0;}}'.format(self.build_test_calls())
+        self.file.write('int main() {{ {} return 0;}}'.format(self.build_test_calls()))
+        self.file.close()
 
     def build_prototype(self):
-        self.file.write('extern {} {}({});\n'.format(self.c_function_return, name, ','.join(map(lambda p: p.get_prototype_representation(), self.parameters))))
+        return 'extern {} {}({});\n'.format(self.c_function_return, self.name, ','.join(map(lambda p: p.get_prototype_representation(), self.parameters)))
     
     def build_test_calls(self):
         """Method where subroutines implement the calls to test the input data and print out the calls' results"""

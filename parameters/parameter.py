@@ -4,7 +4,6 @@ class parameter:
     is_output = False #By default, not a function output (to be overriden e.g., by arrays/strings)
 
     def __init__(self, idx):
-        self.name = name
         self.idx = idx #Index to uniquely identify parameter amongst all parameters
     
     def get_prototype_representation(self):
