@@ -1,18 +1,28 @@
---- 
-soma: 
-  params: 
-    - int
-    - int
-  return: int
-SOMA_V:
+# soma: 
+#   params: 
+#     - int
+#     - int
+#   return: 
+#     - int
+# SOMA_V:
+#   params:
+#     - array int
+#     - int
+#   return: 
+#     - int
+# somaVFSIMDFEX1A:
+#   params:
+#     - array float
+#     - array float
+#     - int
+#     - array float
+#   return:
+#     - array float
+testmixed:
   params:
-    - array int
+    - array float
+    - string
+  return:
     - int
-  return: int
-somaVFSIMDFEX1A:
-  params:
     - array float
-    - array float
-    - array float
-    - int
-  return: void
+    - string
