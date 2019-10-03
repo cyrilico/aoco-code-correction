@@ -27,7 +27,7 @@ def build_subroutine_c_file(name, definition, test_cases):
     elif not any(map_to_truth_value): #Numeric output
         Numeric(name, definition['params'], test_cases, definition['return'][0]).build_c_file()
     else: #Mixed return
-        Mixed(name, definition['params'], test_cases, definition['return']).build_c_file()
+        Mixed(name, definition['params'], test_cases, definition['return'][0], definition['return'][1:]).build_c_file()
 
 
 if __name__ == "__main__":

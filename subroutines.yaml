@@ -1,4 +1,3 @@
---- 
 # soma: 
 #   params: 
 #     - int
@@ -11,11 +10,19 @@
 #     - int
 #   return: 
 #     - int
-somaVFSIMDFEX1A:
+# somaVFSIMDFEX1A:
+#   params:
+#     - array float
+#     - array float
+#     - int
+#     - array float
+#   return:
+#     - array float
+testmixed:
   params:
     - array float
-    - array float
+    - string
+  return:
     - int
     - array float
-  return:
-    - array float
+    - string

@@ -4,23 +4,29 @@ from parameters.numeric_parameter import numeric_parameter as Numeric
 from parameters.array_parameter import array_parameter as Array
 
 class mixed_subroutine(subroutine):
-    """Subroutine that returns both a numeric value and one or more arrays"""
+    """Subroutine that returns both a number and one or more arrays"""
 
-    def __init__(self, name, parameters, test_inputs, return_type):
+    def __init__(self, name, parameters, test_inputs, number_return_type, array_outputs):
         super().__init__(name, parameters, test_inputs)
-        self.output = return_type
+        self.c_function_return = number_return_type
+        self.printf_format = 'd' if number_return_type == 'int' else 'f'
+        self.array_outputs = array_outputs
 
     def build_test_calls(self):
-        """Method where subroutines implement the calls to test the input data and print out the calls' results"""
-        #TODO: Structure should be: for all parameters do get_test_declaration_representation, then make the call. Incorporate printf accordingly
-        pass
+        return ''.join(['{} {} {}'.format(\
+                    #Declare output variables beforehand, so we have access to them after subroutine call
+                    ''.join([parameter.get_test_declaration_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)]),\
+                    #Actually make subroutine call
+                    'printf("%{}\\n",{}({}));'.format(self.printf_format, self.name, ','.join([parameter.get_test_call_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)])),\
+                    #Access previously declared variables to print their final values
+                    ''.join([parameter.get_test_call_output_representation(test_idx) for parameter in self.parameters])) \
+                for test_idx, test_input in enumerate(self.test_inputs)])
     
     def process_parameters(self, parameters):
-        #TODO Update
         for idx, parameter in enumerate(parameters):
             if parameter == 'string':
-                self.parameters.append(string_parameter(idx, False))
-            elif parameter == 'array':
-                self.parameters.append(array_parameter(idx, parameter.replace('array','').strip(), False))
+                self.parameters.append(String(idx, True if idx >= (len(parameters) - len(self.array_outputs)) else False))
+            elif 'array' in parameter:
+                self.parameters.append(Array(idx, parameter.replace('array','').strip(), True if idx >= (len(parameters) - len(self.array_outputs)) else False))
             else: #numeric
-                self.parameters.append(numeric_parameter(idx, parameter))
+                self.parameters.append(Numeric(idx, parameter))

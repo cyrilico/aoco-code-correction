@@ -12,10 +12,6 @@ class numeric_subroutine(subroutine):
         self.printf_format = 'd' if return_type == 'int' else 'f'
 
     def build_test_calls(self):
-       #for test_idx, test_input in enumerate(self.test_inputs):
-       #    for test_value, parameter in zip(test_input, self.parameters):
-       #        parameter.get_test_call_representation(test_value, test_idx)
-
         return ''.join(['printf("%{}\\n", {}({}));'.format(self.printf_format, self.name, \
                     ','.join([parameter.get_test_call_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)])) \
                 for test_idx, test_input in enumerate(self.test_inputs)])
