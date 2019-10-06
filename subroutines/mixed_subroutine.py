@@ -13,13 +13,13 @@ class mixed_subroutine(subroutine):
         self.array_outputs = array_outputs
 
     def build_test_calls(self):
-        return ''.join(['{} {} {}'.format(\
+        return ''.join(['{} {} {} printf("\\n");'.format(\
                     #Declare output variables beforehand, so we have access to them after subroutine call
                     ''.join([parameter.get_test_declaration_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)]),\
                     #Actually make subroutine call
-                    'printf("%{}\\n",{}({}));'.format(self.printf_format, self.name, ','.join([parameter.get_test_call_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)])),\
+                    'printf("%{};",{}({}));'.format(self.printf_format, self.name, ','.join([parameter.get_test_call_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)])),\
                     #Access previously declared variables to print their final values
-                    ''.join([parameter.get_test_call_output_representation(test_idx) for parameter in self.parameters])) \
+                    'printf(";");'.join(filter(lambda x: x != '', [parameter.get_test_call_output_representation(test_idx) for parameter in self.parameters]))) \
                 for test_idx, test_input in enumerate(self.test_inputs)])
     
     def process_parameters(self, parameters):

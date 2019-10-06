@@ -11,13 +11,13 @@ class array_subroutine(subroutine):
         self.outputs = outputs
 
     def build_test_calls(self):
-        return ''.join(['{} {} {}'.format(\
+        return ''.join(['{} {} {} printf("\\n");'.format(\
                     #Declare output variables beforehand, so we have access to them after subroutine call
                     ''.join([parameter.get_test_declaration_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)]),\
                     #Actually make subroutine call
                     '{}({});'.format(self.name, ','.join([parameter.get_test_call_representation(test_value, test_idx) for test_value, parameter in zip(test_input, self.parameters)])),\
                     #Access previously declared variables to print their final values
-                    ''.join([parameter.get_test_call_output_representation(test_idx) for parameter in self.parameters])) \
+                    'printf(";");'.join(filter(lambda x: x != '', [parameter.get_test_call_output_representation(test_idx) for parameter in self.parameters]))) \
                 for test_idx, test_input in enumerate(self.test_inputs)])
     
     def process_parameters(self, parameters):
