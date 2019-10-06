@@ -1,9 +1,8 @@
 class parameter:
     """Abstract parent class that defines a generic subroutine parameter"""
 
-    is_output = False #By default, not a function output (to be overriden e.g., by arrays/strings)
-
     def __init__(self, idx):
+        self.is_output = False #By default, not a function output (to be overriden e.g., by arrays/strings)
         self.idx = idx #Index to uniquely identify parameter amongst all parameters
     
     def get_prototype_representation(self):
