@@ -9,6 +9,7 @@ class subroutine:
         self.test_inputs = test_inputs
         self.file = open('{}.c'.format(self.name), 'w')
         self.parameters_raw = parameters
+        self.parameters = []
     
     def build_c_file(self):
         self.process_parameters(self.parameters_raw)
