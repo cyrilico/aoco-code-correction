@@ -6,7 +6,10 @@ from subroutines.array_subroutine import array_subroutine as Array
 from subroutines.mixed_subroutine import mixed_subroutine as Mixed
 
 from zipfile import ZipFile as unzip
+from re import match
 import os
+
+TEMP_GRADING_FOLDER = 'grading'
 
 def parse_args():
     """Uses argparse module to create a pretty CLI interface that has the -h by default and that helps the user understand the arguments and their usage
@@ -33,19 +36,20 @@ def build_subroutine_c_file(name, definition, test_cases):
         Mixed(name, definition['params'], test_cases, definition['return'][0], definition['return'][1:]).build_c_file()
 
 def grade_submission(student_submission, subroutines, test_outputs, grades_file):
-    os.mkdir('grading')
+    global TEMP_GRADING_FOLDER
+    if os.path.exists(TEMP_GRADING_FOLDER):
+        os.rmdir(TEMP_GRADING_FOLDER)
+    os.mkdir(TEMP_GRADING_FOLDER)
 
     #Extract all assembly files to grading directory
     with unzip(student_submission, 'r') as zip_file:
-        #Get a list of all archived file names from the zip
-        file_names = zip_file.namelist()
-        for file_name in file_names:
-            if file_name.endswith('.s'):
-                zip_file.extract(file_name, 'grading')
+        #Get a list of all subroutine file names from the zip
+        files = filter(lambda x: x is not None, map(lambda y: match(r'(?:\w+/)*([a-zA-Z0-9\-]+\.s)', y), zip_file.namelist()))
+        for file in files:
+            with open('{}/{}'.format(TEMP_GRADING_FOLDER, file.group(1)), 'wb') as f:
+                f.write(zip_file.read(file.group(0)))
     
     #TODO: for each subroutine, compile, execute (redirecting output to temp .txt), read txt and compare each testinput to its output
-
-    os.rmdir('grading')
 
 
 if __name__ == "__main__":
@@ -53,7 +57,6 @@ if __name__ == "__main__":
     try:
         subroutines = safe_load(open(args['sr']))
         test_suite = safe_load(open(args['t']))
-        print(test_suite)
     except IOError as err:
         print('Could not open: {}, please specify a valid file'.format(str(err)))
         exit(-1)
@@ -65,4 +68,4 @@ if __name__ == "__main__":
     
     grades_file = open('grades.csv', 'w')
     for student_submission in args['sm']:
-        grade_submission(student_submission, subroutines.keys(), [map(lambda test: test['outputs']) for subroutine in subroutines.keys()], grades_file)
+        grade_submission(student_submission, subroutines.keys(), [map(lambda test: test['outputs'], test_suite[name]) for name in subroutines.keys()], grades_file)
