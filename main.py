@@ -48,12 +48,12 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
         #Get a list of all subroutine file names from the zip
         files = filter(lambda x: x is not None, map(lambda y: match(r'(?:\w+/)*([\w\-]+\.s)', y), zip_file.namelist()))
         for file in files:
-            with open('{}/{}'.format(TEMP_GRADING_FOLDER, file.group(1)), 'wb') as f:
+            with open('{}/{}'.format(TEMP_GRADING_FOLDER, file.group(1).lower()), 'wb') as f:
                 f.write(zip_file.read(file.group(0)))
     
     student_score = dict()
     for subroutine, outputs in zip(subroutines, test_outputs):
-        output_file = '{}/{}'.format(TEMP_GRADING_FOLDER, subroutine)
+        output_file = '{}/{}'.format(TEMP_GRADING_FOLDER, subroutine.lower())
         #Build expected output list for comparison
         expected_outputs = [';'.join(map(str, output)) for output in outputs]
 
@@ -65,7 +65,7 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
 
         #Execute and redirect output to temporary .txt file
         real_output_file = '{}.txt'.format(output_file)
-        run('./{}/{}'.format(TEMP_GRADING_FOLDER, subroutine), stdout=open(real_output_file, 'w'))
+        run('./{}'.format(output_file), stdout=open(real_output_file, 'w'))
 
         #Read real outputs
         real_outputs = map(lambda x: x.strip(), open(real_output_file, 'r').readlines())
