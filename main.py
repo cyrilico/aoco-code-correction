@@ -46,17 +46,40 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
     #Extract all assembly files to grading directory
     with unzip(student_submission, 'r') as zip_file:
         #Get a list of all subroutine file names from the zip
-        files = filter(lambda x: x is not None, map(lambda y: match(r'(?:\w+/)*([a-zA-Z0-9\-]+\.s)', y), zip_file.namelist()))
+        files = filter(lambda x: x is not None, map(lambda y: match(r'(?:\w+/)*([\w\-]+\.s)', y), zip_file.namelist()))
         for file in files:
             with open('{}/{}'.format(TEMP_GRADING_FOLDER, file.group(1)), 'wb') as f:
                 f.write(zip_file.read(file.group(0)))
     
-    #TODO: for each subroutine, compile, execute (redirecting output to temp .txt), read txt and compare each testinput to its output
+    student_score = dict()
     for subroutine, outputs in zip(subroutines, test_outputs):
-        outputs_combined = [';'.join(map(str, output)) for output in outputs]
-        print(list(outputs_combined))        
+        output_file = '{}/{}'.format(TEMP_GRADING_FOLDER, subroutine)
+        #Build expected output list for comparison
+        expected_outputs = [';'.join(map(str, output)) for output in outputs]
 
-    delete_dir(TEMP_GRADING_FOLDER)
+        #Compile student code alongside generated C file
+        compilation_output = run('aarch64-linux-gnu-gcc -o {} {}.c {}.s -static'.format(output_file, subroutine, output_file).split(' '))
+        if compilation_output.returncode != 0: #If it doesn't even compile, not worth checking any further
+            student_score[subroutine] = 0
+            continue
+
+        #Execute and redirect output to temporary .txt file
+        real_output_file = '{}.txt'.format(output_file)
+        run('./{}/{}'.format(TEMP_GRADING_FOLDER, subroutine), stdout=open(real_output_file, 'w'))
+
+        #Read real outputs
+        real_outputs = map(lambda x: x.strip(), open(real_output_file, 'r').readlines())
+
+        #Actual comparison
+        for real_output, expected_output in zip(real_outputs, expected_outputs):
+            if real_output == expected_output:
+                student_score[subroutine] = student_score.get(subroutine, 0) + 1
+        
+        #Calculate final score for question
+        student_score[subroutine] = student_score.get(subroutine, 0) / len(expected_outputs)
+
+    #delete_dir(TEMP_GRADING_FOLDER)
+    return student_score
 
 if __name__ == "__main__":
     args = parse_args()
@@ -74,4 +97,4 @@ if __name__ == "__main__":
     
     grades_file = open('grades.csv', 'w')
     for student_submission in args['sm']:
-        grade_submission(student_submission, subroutines.keys(), [map(lambda test: test['outputs'], test_suite[name]) for name in subroutines.keys()], grades_file)
+        print(grade_submission(student_submission, subroutines.keys(), [map(lambda test: test['outputs'], test_suite[name]) for name in subroutines.keys()], grades_file))
