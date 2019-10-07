@@ -52,8 +52,9 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
                 f.write(zip_file.read(file.group(0)))
     
     #TODO: for each subroutine, compile, execute (redirecting output to temp .txt), read txt and compare each testinput to its output
-    #for subroutine, outputs in zip(subroutines, test_outputs):
-        
+    for subroutine, outputs in zip(subroutines, test_outputs):
+        outputs_combined = [';'.join(map(str, output)) for output in outputs]
+        print(list(outputs_combined))        
 
     delete_dir(TEMP_GRADING_FOLDER)
 
