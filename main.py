@@ -5,11 +5,13 @@ from subroutines.numeric_subroutine import numeric_subroutine as Numeric
 from subroutines.array_subroutine import array_subroutine as Array
 from subroutines.mixed_subroutine import mixed_subroutine as Mixed
 
+#Imports specific to grading process
 from zipfile import ZipFile as unzip
 from re import match
 import os
 from shutil import rmtree as delete_dir
 from subprocess import run
+import csv
 
 TEMP_GRADING_FOLDER = 'grading'
 
@@ -65,7 +67,10 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
 
         #Execute and redirect output to temporary .txt file
         real_output_file = '{}.txt'.format(output_file)
-        run('./{}'.format(output_file), stdout=open(real_output_file, 'w'))
+        execution_output = run('./{}'.format(output_file), stdout=open(real_output_file, 'w'))
+        if execution_output.returncode != 0: #If it doesn't run properly, not worth grading
+            student_score[subroutine] = 0
+            continue
 
         #Read real outputs
         real_outputs = map(lambda x: x.strip(), open(real_output_file, 'r').readlines())
@@ -78,8 +83,8 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
         #Calculate final score for question
         student_score[subroutine] = student_score.get(subroutine, 0) / len(expected_outputs)
 
-    #delete_dir(TEMP_GRADING_FOLDER)
-    return student_score
+    delete_dir(TEMP_GRADING_FOLDER)
+    grades_file.writerow([match(r'(\w+)\.zip', student_submission).group(1), *[student_score[sr] for sr in subroutines]])
 
 if __name__ == "__main__":
     args = parse_args()
@@ -95,6 +100,8 @@ if __name__ == "__main__":
     for name, definition in subroutines.items():
         build_subroutine_c_file(name, definition, map(lambda test: test['inputs'], test_suite[name]))
     
-    grades_file = open('grades.csv', 'w')
+    grades_file = csv.writer(open('grades.csv', 'w'), delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    grades_file.writerow(['Student', *subroutines])
+    
     for student_submission in args['sm']:
-        print(grade_submission(student_submission, subroutines.keys(), [map(lambda test: test['outputs'], test_suite[name]) for name in subroutines.keys()], grades_file))
+        grade_submission(student_submission, subroutines.keys(), [map(lambda test: test['outputs'], test_suite[name]) for name in subroutines.keys()], grades_file)
