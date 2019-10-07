@@ -39,6 +39,8 @@ def build_subroutine_c_file(name, definition, test_cases):
     else: #Mixed return
         Mixed(name, definition['params'], test_cases, definition['return'][0], definition['return'][1:]).build_c_file()
 
+#TODO: Print report of failed tests (one file per student?)
+#Involves passing inputs for more comprehensive report
 def grade_submission(student_submission, subroutines, test_outputs, grades_file):
     global TEMP_GRADING_FOLDER
     if os.path.exists(TEMP_GRADING_FOLDER):
