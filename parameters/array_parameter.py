@@ -21,5 +21,8 @@ class array_parameter(parameter):
     def get_test_call_output_representation(self, test_idx):
         var_name = 'test{}_arg{}'.format(test_idx, self.idx)
         array_size = 'sizeof({})/sizeof({}[0])'.format(var_name, var_name)
-        return 'for(int i = 0; i < {}; ++i) printf("%{}%c", {}[i], (i < {} - 1 ? \',\' : \'\\0\'));'.format(array_size, self.printf_format, var_name, array_size) \
+        return '{}{}{}'.format(\
+                    'printf("[");',
+                    'for(int i = 0; i < {}; ++i) printf("%{}%c", {}[i], (i < {} - 1 ? \',\' : \'\\0\'));'.format(array_size, self.printf_format, var_name, array_size), \
+                    'printf("]");')\
             if self.is_output else ''
