@@ -23,6 +23,6 @@ class array_parameter(parameter):
         array_size = 'sizeof({})/sizeof({}[0])'.format(var_name, var_name)
         return '{}{}{}'.format(\
                     'printf("[");',
-                    'for(int i = 0; i < {}; ++i) printf("%{}%c", {}[i], (i < {} - 1 ? \',\' : \'\\0\'));'.format(array_size, self.printf_format, var_name, array_size), \
+                    'for(int i = 0; i < {}; ++i) printf("%{}%s", {}[i], (i < {} - 1 ? ", " : "\\0"));'.format(array_size, self.printf_format, var_name, array_size), \
                     'printf("]");')\
             if self.is_output else ''
