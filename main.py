@@ -8,6 +8,8 @@ from subroutines.mixed_subroutine import mixed_subroutine as Mixed
 from zipfile import ZipFile as unzip
 from re import match
 import os
+from shutil import rmtree as delete_dir
+from subprocess import run
 
 TEMP_GRADING_FOLDER = 'grading'
 
@@ -38,7 +40,7 @@ def build_subroutine_c_file(name, definition, test_cases):
 def grade_submission(student_submission, subroutines, test_outputs, grades_file):
     global TEMP_GRADING_FOLDER
     if os.path.exists(TEMP_GRADING_FOLDER):
-        os.rmdir(TEMP_GRADING_FOLDER)
+        delete_dir(TEMP_GRADING_FOLDER)
     os.mkdir(TEMP_GRADING_FOLDER)
 
     #Extract all assembly files to grading directory
@@ -50,7 +52,10 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
                 f.write(zip_file.read(file.group(0)))
     
     #TODO: for each subroutine, compile, execute (redirecting output to temp .txt), read txt and compare each testinput to its output
+    #for subroutine, outputs in zip(subroutines, test_outputs):
+        
 
+    delete_dir(TEMP_GRADING_FOLDER)
 
 if __name__ == "__main__":
     args = parse_args()
