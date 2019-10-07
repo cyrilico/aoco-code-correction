@@ -1,6 +1,6 @@
 .text
-.global SOMA
-.type SOMA,"function"
+.global soma
+.type soma,"function"
 
-SOMA:   add    X0, X0, X1   // comentário
+soma:   add    X0, X0, X1   // comentï¿½rio
         ret
