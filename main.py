@@ -14,6 +14,7 @@ from subprocess import run
 import csv
 
 TEMP_GRADING_FOLDER = 'grading'
+FEEDBACK_FOLDER = 'feedback'
 
 def parse_args():
     """Uses argparse module to create a pretty CLI interface that has the -h by default and that helps the user understand the arguments and their usage
@@ -39,13 +40,16 @@ def build_subroutine_c_file(name, definition, test_cases):
     else: #Mixed return
         Mixed(name, definition['params'], test_cases, definition['return'][0], definition['return'][1:]).build_c_file()
 
-#TODO: Print report of failed tests (one file per student?)
-#Involves passing inputs for more comprehensive report
-def grade_submission(student_submission, subroutines, test_outputs, grades_file):
+
+def grade_submission(student_submission, subroutines, test_suite, grades_file):
     global TEMP_GRADING_FOLDER
+    global FEEDBACK_FOLDER
     if os.path.exists(TEMP_GRADING_FOLDER):
         delete_dir(TEMP_GRADING_FOLDER)
     os.mkdir(TEMP_GRADING_FOLDER)
+
+    test_outputs = [map(lambda test: test['outputs'], test_suite[name]) for name in subroutines]
+    test_inputs = [map(lambda test: test['inputs'], test_suite[name]) for name in subroutines]
 
     #Extract all assembly files to grading directory
     with unzip(student_submission, 'r') as zip_file:
@@ -56,15 +60,25 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
                 f.write(zip_file.read(file.group(0)))
     
     student_score = dict()
-    for subroutine, outputs in zip(subroutines, test_outputs):
+    student_code = match(r'(\w+)\.zip', student_submission).group(1)
+    incorrect_behaviour_feedback_file = open('{}/{}.txt'.format(FEEDBACK_FOLDER, student_code), 'w')
+    for subroutine, inputs, outputs in zip(subroutines, test_inputs, test_outputs):
+        incorrect_behaviour_feedback_file.write('{}:\n'.format(subroutine))
+        subroutine_misbehaved = False
+
+        #Subroutine output file template
         output_file = '{}/{}'.format(TEMP_GRADING_FOLDER, subroutine.lower())
-        #Build expected output list for comparison
+        
+        #Build given input (for a better feedback) and expected output (for comparison) lists
         expected_outputs = [';'.join(map(str, output)) for output in outputs]
+        given_inputs = [';'.join(map(str, given)) for given in inputs]
 
         #Compile student code alongside generated C file
         compilation_output = run('aarch64-linux-gnu-gcc -o {} {}.c {}.s -static'.format(output_file, subroutine, output_file).split(' '))
         if compilation_output.returncode != 0: #If it doesn't even compile, not worth checking any further
             student_score[subroutine] = 0
+            subroutine_misbehaved = True
+            incorrect_behaviour_feedback_file.write('Failed to compile: {}\n'.format(compilation_output.stdout))
             continue
 
         #Execute and redirect output to temporary .txt file
@@ -72,21 +86,28 @@ def grade_submission(student_submission, subroutines, test_outputs, grades_file)
         execution_output = run('./{}'.format(output_file), stdout=open(real_output_file, 'w'))
         if execution_output.returncode != 0: #If it doesn't run properly, not worth grading
             student_score[subroutine] = 0
+            subroutine_misbehaved = True
+            incorrect_behaviour_feedback_file.write('Failed to run: {}\n'.format(compilation_output.stdout))
             continue
 
         #Read real outputs
         real_outputs = map(lambda x: x.strip(), open(real_output_file, 'r').readlines())
 
         #Actual comparison
-        for real_output, expected_output in zip(real_outputs, expected_outputs):
+        for real_output, expected_output, given_input in zip(real_outputs, expected_outputs, given_inputs):
             if real_output == expected_output:
                 student_score[subroutine] = student_score.get(subroutine, 0) + 1
-        
+            else:
+                subroutine_misbehaved = True
+                incorrect_behaviour_feedback_file.write('Input: {} | Expected: {} | Got: {}\n'.format(given_input, expected_output, real_output))
+
+        if not subroutine_misbehaved:
+            incorrect_behaviour_feedback_file.write('Everything OK.\n')
         #Calculate final score for question
         student_score[subroutine] = student_score.get(subroutine, 0) / len(expected_outputs)
 
     delete_dir(TEMP_GRADING_FOLDER)
-    grades_file.writerow([match(r'(\w+)\.zip', student_submission).group(1), *[student_score[sr] for sr in subroutines]])
+    grades_file.writerow([student_code, *[student_score[sr] for sr in subroutines]])
 
 if __name__ == "__main__":
     args = parse_args()
@@ -105,5 +126,8 @@ if __name__ == "__main__":
     grades_file = csv.writer(open('grades.csv', 'w'), delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
     grades_file.writerow(['Student', *subroutines])
     
+    if os.path.exists(FEEDBACK_FOLDER):
+        delete_dir(FEEDBACK_FOLDER)
+    os.mkdir(FEEDBACK_FOLDER)
     for student_submission in args['sm']:
-        grade_submission(student_submission, subroutines.keys(), [map(lambda test: test['outputs'], test_suite[name]) for name in subroutines.keys()], grades_file)
+        grade_submission(student_submission, subroutines.keys(), test_suite, grades_file)

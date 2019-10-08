@@ -39,7 +39,7 @@ SOMA_V:
     - [0]
     - 1
     outputs:
-    - 0
+    - 3
 # somaVFSIMDFEX1A:
 #   - inputs:
 #     - [3.0,-1.0,8.0,0.0,-3.0]
