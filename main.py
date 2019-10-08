@@ -41,6 +41,7 @@ def build_subroutine_c_file(name, definition, test_cases):
         Mixed(name, definition['params'], test_cases, definition['return'][0], definition['return'][1:]).build_c_file()
 
 
+#TODO: Extract this into proper class (ajust program inputs for some global vars) with expectancy to incorporate code grading
 def grade_submission(student_submission, subroutines, test_suite, grades_file):
     global TEMP_GRADING_FOLDER
     global FEEDBACK_FOLDER
