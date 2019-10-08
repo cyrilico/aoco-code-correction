@@ -10,7 +10,7 @@ from zipfile import ZipFile as unzip
 from re import match
 import os
 from shutil import rmtree as delete_dir
-from subprocess import run
+import subprocess
 import csv
 
 TEMP_GRADING_FOLDER = 'grading'
@@ -74,20 +74,24 @@ def grade_submission(student_submission, subroutines, test_suite, grades_file):
         given_inputs = [';'.join(map(str, given)) for given in inputs]
 
         #Compile student code alongside generated C file
-        compilation_output = run('aarch64-linux-gnu-gcc -o {} {}.c {}.s -static'.format(output_file, subroutine, output_file).split(' '))
-        if compilation_output.returncode != 0: #If it doesn't even compile, not worth checking any further
+        compilation_process = subprocess.Popen('aarch64-linux-gnu-gcc -o {} {}.c {}.s -static'.format(output_file, subroutine, output_file).split(' '), stderr=subprocess.PIPE)
+        compilation_process.wait()
+        (_, stderr) = compilation_process.communicate()
+        if compilation_process.returncode != 0: #If it doesn't even compile, not worth checking any further
             student_score[subroutine] = 0
             subroutine_misbehaved = True
-            incorrect_behaviour_feedback_file.write('Failed to compile: {}\n'.format(compilation_output.stdout))
+            incorrect_behaviour_feedback_file.write('Failed to compile: {}\n'.format(stderr))
             continue
 
         #Execute and redirect output to temporary .txt file
         real_output_file = '{}.txt'.format(output_file)
-        execution_output = run('./{}'.format(output_file), stdout=open(real_output_file, 'w'))
-        if execution_output.returncode != 0: #If it doesn't run properly, not worth grading
+        execution_process = subprocess.Popen('./{}'.format(output_file), stdout=open(real_output_file, 'w'), stderr=subprocess.PIPE)
+        execution_process.wait()
+        (_, stderr) = execution_process.communicate()
+        if execution_process.returncode != 0: #If it doesn't run properly, not worth grading
             student_score[subroutine] = 0
             subroutine_misbehaved = True
-            incorrect_behaviour_feedback_file.write('Failed to run: {}\n'.format(compilation_output.stdout))
+            incorrect_behaviour_feedback_file.write('Failed to run: {}\n'.format(stderr))
             continue
 
         #Read real outputs
