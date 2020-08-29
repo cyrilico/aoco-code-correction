@@ -1,0 +1,25 @@
+SOMA:
+Input: 2;0 | Failed to run: process took longer than 2s limit
+
+4/5 tests passed
+
+SOMA_V:
+Everything OK.
+
+3/3 tests passed
+
+somaVFSIMDFEX1A:
+Everything OK.
+
+1/1 tests passed
+
+testmixed:
+Input: [1, 2, 3];Hello World | Expected: 5;[1, 2, 3];Hello World | Got: 5;[1,2,3];kello World
+Input: [2, 3, 4];Goodbye horses | Expected: 5;[2, 3, 4];Goodbye horses | Got: 5;[2,3,4];koodbye horses
+
+0/2 tests passed
+
+teststring:
+Failed to compile: b'aarch64-linux-gnu-gcc: error: grading/teststring.s: No such file or directory\n'
+
+0/1 tests passed

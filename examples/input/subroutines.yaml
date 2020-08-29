@@ -1,0 +1,32 @@
+SOMA: 
+  params: 
+    - int
+    - int
+  return: 
+    - int
+SOMA_V:
+  params:
+    - array int
+    - int
+  return: 
+    - int
+somaVFSIMDFEX1A:
+  params:
+    - array float
+    - array float
+    - int
+    - array float
+  return:
+    - array float
+testmixed:
+  params:
+    - array int
+    - string
+  return:
+    - int
+    - array int 
+    - string
+teststring:
+  params:
+    - array int
+  return: []

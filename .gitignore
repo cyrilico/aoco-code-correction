@@ -1,0 +1,7 @@
+*.c
+__pycache__
+grading/
+feedback/
+!examples/output/feedback/
+*.csv
+!examples/output/grades.csv
