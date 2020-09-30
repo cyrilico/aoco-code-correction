@@ -1,4 +1,4 @@
-# AOCO - Automatic Observation and Correction of (subroutine) Operations
+# AOCO - Automatic Observation and (grade) Calculation for (subroutine) Operations
 
 AOCO is an automatic code correction and grading tool that works for small to medium complexity ARM subroutines.
 It was developed to be used as an automated solution to grade freshmen students' assignments and practical exams and was successfully used for the first time in a [Microprocessor and Personal Computers course](https://sigarra.up.pt/feup/en/UCURR_GERAL.FICHA_UC_VIEW?pv_ocorrencia_id=436431) at the Faculty of Engineering of the University of Porto during the 2nd semester of 2019/2020.
