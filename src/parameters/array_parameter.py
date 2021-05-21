@@ -24,7 +24,7 @@ class array_parameter(parameter):
         return 'arg{}'.format(self.idx) if self.is_output else '({}[]){{{{ {{}} }}}}'.format(self.element_type)
     
     def get_literal_representantion(self, value):
-        return ','.join(map(str, value)) if self.printf_format != 'c' else ','.join(map(lambda x: "'{}'".format(x), value))
+        return ','.join(map(str, value)) if self.printf_format != 'c' else ','.join(map(lambda x: str(x) if type(x) is int else f"'{x}'", value))
 
     def get_test_call_output_representation(self):
         var_name = 'arg{}'.format(self.idx)
