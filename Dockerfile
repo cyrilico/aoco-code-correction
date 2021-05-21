@@ -1,8 +1,8 @@
-FROM ubuntu:19.10
+FROM ubuntu:20.10
 
 LABEL maintainer="jpdamas15@gmail.com"
-LABEL description="Ubuntu 19.10 image ready to execute automatic AOCO sub-routine code correction tool"
-LABEL version="1.0"
+LABEL description="Ubuntu 20.10 image ready to execute automatic AOCO sub-routine code correction tool"
+LABEL version="1.1"
 
 # Dependencies directory (system wide and Python requirements.txt)
 COPY dependencies /dependencies
