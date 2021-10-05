@@ -85,3 +85,6 @@ Though there is no official template, as long as they are well explained and add
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
+
+## Publication
+This work was the foundation for a publication accepted and presented in the 30th Annual Conference of the European Association for Education in Electrical and Information Engineering (EAEEIE). For more information, check https://doi.org/10.1109/EAEEIE50507.2021.9530951.
