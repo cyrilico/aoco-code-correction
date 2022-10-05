@@ -88,3 +88,4 @@ Though there is no official template, as long as they are well explained and add
 
 ## Publication
 This work was the foundation for a publication accepted and presented in the 30th Annual Conference of the European Association for Education in Electrical and Information Engineering (EAEEIE). For more information, check https://doi.org/10.1109/EAEEIE50507.2021.9530951.
+More recently, it's been expanded and its positive impact in student attendance and final grade distribution analyzed in a follow-up paper available at https://doi.org/10.1109/CISPEE47794.2021.9507218.
